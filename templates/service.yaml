@@ -1,13 +1,29 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "gtm-cloud-helm.fullname" . }}
+  name: {{ include "gtm-cloud-helm.fullname" . }}-preview
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.preview.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.preview.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "gtm-cloud-helm.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gtm-cloud-helm.fullname" . }}-preview
+  labels:
+    {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.sst.service.type }}
+  ports:
+    - port: {{ .Values.sst.service.port }}
       targetPort: http
       protocol: TCP
       name: http

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gtm-cloud-helm.fullname" . }}
+  name: {{ include "gtm-cloud-helm.fullname" . }}-sst
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.sst.autoscaling.enabled }}
+  replicas: {{ .Values.sst.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "gtm-cloud-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.sst.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -33,9 +33,18 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: CONTAINER_CONFIG
+              value: {{ .Values.config.container | quote }}
+            - name: RUN_AS_PREVIEW_SERVER
+              value: "false"
+            - name: PREVIEW_SERVER_URL
+              value: {{ .Values.sst.preview.url | quote }}
+            - name: PORT
+              value: {{ .Values.sst.service.port | quote }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.sst.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -46,16 +55,85 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.sst.resources | nindent 12 }}
+      {{- with .Values.sst.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.sst.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.sst.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gtm-cloud-helm.fullname" . }}-preview
+  labels:
+    {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.preview.autoscaling.enabled }}
+  replicas: {{ .Values.preview.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "gtm-cloud-helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.preview.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gtm-cloud-helm.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gtm-cloud-helm.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: CONTAINER_CONFIG
+              value: {{ .Values.config.container | quote }}
+            - name: RUN_AS_PREVIEW_SERVER
+              value: "true"
+            - name: PORT
+              value: {{ .Values.preview.service.port }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.preview.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.preview.resources | nindent 12 }}
+      {{- with .Values.preview.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.preview.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.preview.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "gtm-cloud-helm.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "gtm-cloud-helm.fullname" . }}:{{ .Values.sst.service.port }}']
   restartPolicy: Never
