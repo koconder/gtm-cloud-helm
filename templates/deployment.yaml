@@ -41,7 +41,7 @@ spec:
             - name: PREVIEW_SERVER_URL
               value: {{ .Values.sst.preview.url | quote }}
             - name: PORT
-              value: {{ toString .Values.sst.service.port }}
+              value: {{ toString .Values.sst.service.port | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.sst.service.port }}
@@ -110,7 +110,7 @@ spec:
             - name: RUN_AS_PREVIEW_SERVER
               value: "true"
             - name: PORT
-              value: {{ toString .Values.preview.service.port }}
+              value: {{ toString .Values.preview.service.port | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.preview.service.port }}
