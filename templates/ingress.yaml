@@ -16,6 +16,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}-sst
+  namespace: {{ include "gtm-cloud-helm.namespace" . }}
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
   {{- with .Values.sst.ingress.annotations }}
@@ -44,7 +45,7 @@ spec:
           {{- range .paths }}
           - path: {{ .path }}
             {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{ .pathType }}
+            pathType: {{ .pathType | default "ImplementationSpecific" }}
             {{- end }}
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
@@ -78,6 +79,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}-preview
+	namespace: {{ include "gtm-cloud-helm.namespace" . }}
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
   {{- with .Values.preview.ingress.annotations }}
