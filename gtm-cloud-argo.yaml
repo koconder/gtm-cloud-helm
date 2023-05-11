@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gtm-cloud
+  namespace: argocd
+spec:
+  destination:
+    namespace: gtm-cloud
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: gtm-cloud-helm
+    repoURL: <YOUR_HELM_CHART_REPO_URL>
+    targetRevision: <YOUR_TARGET_REVISION>
+    helm:
+      values: |
+        image:
+          repository: gcr.io/cloud-tagging-10302018/gtm-cloud-image
+          tag: "1.1.0"
+        config:
+          container: <YOUR_CONTAINER_CONFIG>
+  syncPolicy:
+    automated: {}
