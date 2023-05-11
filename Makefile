@@ -44,3 +44,8 @@ package:
 clean:
 	@echo "==> Cleaning up"
 	rm -f $(CHART_NAME)-*.tgz
+
+.PHONY: precommit
+precommit:
+	@echo "==> Pre-committing"
+	pre-commit run --all-files
