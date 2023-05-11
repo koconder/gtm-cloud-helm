@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "gtm-cloud-helm.fullname" . }}-sst
+  namespace: {{ include "gtm-cloud-helm.namespace" . }}
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
 spec:
