@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "gtm-cloud-helm.fullname" . }}-sst
-	namespace: {{ include "gtm-cloud-helm.namespace" . }}
+  namespace: {{ include "gtm-cloud-helm.namespace" . }}
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
 spec:
