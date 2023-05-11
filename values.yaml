@@ -1,7 +1,7 @@
 # Default values for gtm-cloud-helm.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
+namespace: default
 image:
   repository: gcr.io/cloud-tagging-10302018/gtm-cloud-image
   pullPolicy: IfNotPresent
@@ -11,6 +11,9 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+argoCD:
+  syncWave: 0
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -48,7 +51,13 @@ preview:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
   podAnnotations: {}
-  resources: {}
+  resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -83,7 +92,13 @@ sst:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
   podAnnotations: {}
-  resources: {}
+  resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
