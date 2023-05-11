@@ -78,7 +78,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "gtm-cloud-helm.fullname" . }}-preview
-	namespace: {{ include "gtm-cloud-helm.namespace" . }}
+  namespace: {{ include "gtm-cloud-helm.namespace" . }}
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
 spec:
@@ -125,14 +125,14 @@ spec:
             httpGet:
               path: /healthz
               port: http
-						initialDelaySeconds: 30
-						periodSeconds: 10
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /healthz
               port: http
-						initialDelaySeconds: 5
-						periodSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.preview.resources | nindent 12 }}
       {{- with .Values.preview.nodeSelector }}
