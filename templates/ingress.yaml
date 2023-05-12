@@ -79,7 +79,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}-preview
-	namespace: {{ include "gtm-cloud-helm.namespace" . }}
+  namespace: {{ include "gtm-cloud-helm.namespace" . }}
   labels:
     {{- include "gtm-cloud-helm.labels" . | nindent 4 }}
   {{- with .Values.preview.ingress.annotations }}
